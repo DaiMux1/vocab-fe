@@ -9,48 +9,44 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import _ from 'lodash';
 import { makeValidate, TextField } from 'mui-rff';
-import * as React from 'react';
+import React from 'react';
 import { Form } from 'react-final-form';
 import { NavLink, Redirect } from 'react-router-dom';
 import * as Yup from 'yup';
-import { getCurrentUser, login } from '../services/authService';
-import { UserRole } from '../types/user';
+import { getCurrentUser, signup } from '../services/authService';
 
-interface LoginFormData {
-	username?: string | null;
-	password?: string | null;
+interface SignUpFormData {
+	username: string;
+	email: string;
+	password: string;
+	rePassword: string;
 }
 
-const schema: Yup.SchemaOf<LoginFormData> = Yup.object().shape({
-	username: Yup.string().required(),
-	password: Yup.string().min(5).required()
+const schema: Yup.SchemaOf<SignUpFormData> = Yup.object().shape({
+	username: Yup.string().min(3).required(),
+	email: Yup.string().email().required(),
+	password: Yup.string().min(5).required(),
+	rePassword: Yup.string()
+		.min(5)
+		.required()
+		.oneOf([Yup.ref('password')], 'Passwords must match')
 });
 
-const validate = makeValidate<LoginFormData>(schema);
+const validate = makeValidate(schema);
 
-export default function Login() {
-	const handleSubmit = async (user: LoginFormData) => {
-		if (user.username && user.password) {
-			try {
-				await login({
-					username: user.username,
-					password: user.password
-				});
+const SignUp = () => {
+	const handleSubmit = async (user: SignUpFormData) => {
+		const userSignUp = _.pick(user, 'email', 'password', 'username');
 
-				const currentUser = getCurrentUser();
-				// console.log('currentUser', currentUser);
-				if (currentUser) {
-					const path = currentUser.role === UserRole.manager ? '/manager' : '/';
-					window.location.replace(path);
-				}
-			} catch (e) {
-				alert(e);
-			}
+		try {
+			await signup(userSignUp);
+			window.location.replace('/');
+		} catch (e) {
+			alert(e);
 		}
 	};
-
-	// yes, this can even be async!
 
 	if (getCurrentUser()) return <Redirect to="/" />;
 
@@ -69,14 +65,15 @@ export default function Login() {
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
-					Login
+					Sign Up
 				</Typography>
-				<Form<LoginFormData>
+				<Form<SignUpFormData>
 					onSubmit={handleSubmit}
 					validate={validate}
 					render={({ handleSubmit, invalid, submitting }) => {
 						return (
-							<form onSubmit={handleSubmit}>
+							<form onSubmit={handleSubmit} noValidate>
+								<div className=""></div>
 								<TextField
 									margin="normal"
 									required
@@ -91,16 +88,36 @@ export default function Login() {
 									margin="normal"
 									required
 									fullWidth
+									id="email"
+									label="Email Address"
+									name="email"
+									autoComplete="email"
+									autoFocus
+								/>
+								<TextField
+									margin="normal"
+									required
+									fullWidth
 									name="password"
 									label="Password"
 									type="password"
 									id="password"
 									autoComplete="current-password"
 								/>
-								{/* <FormControlLabel
+								<TextField
+									margin="normal"
+									// required
+									fullWidth
+									name="rePassword"
+									label="Re-type Password"
+									type="password"
+									id="re-password"
+									autoComplete="current-password"
+								/>
+								<FormControlLabel
 									control={<Checkbox value="remember" color="primary" />}
 									label="Remember me"
-								/> */}
+								/>
 								<Button
 									disabled={invalid || submitting}
 									type="submit"
@@ -108,7 +125,7 @@ export default function Login() {
 									variant="contained"
 									sx={{ mt: 3, mb: 2 }}
 								>
-									Login
+									Sign up
 								</Button>
 							</form>
 						);
@@ -116,18 +133,15 @@ export default function Login() {
 				/>
 
 				<Grid container>
-					<Grid item xs>
-						<NavLink to="/forgot-password">
-							<Link variant="body2">Forgot password?</Link>
-						</NavLink>
-					</Grid>
 					<Grid item>
-						<NavLink to="/signup">
-							<Link variant="body2">Don't have an account? Sign Up</Link>
+						<NavLink to="/login">
+							<Link variant="body2">You have an account? Log In</Link>
 						</NavLink>
 					</Grid>
 				</Grid>
 			</Box>
 		</Container>
 	);
-}
+};
+
+export default SignUp;

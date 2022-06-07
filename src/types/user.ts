@@ -5,9 +5,9 @@ export enum UserStatus {
 }
 
 export enum UserRole {
-	user = 'Admin',
-	manager = 'User',
-	super_admin = 'Guest'
+	user,
+	manager,
+	super_admin
 }
 
 export type UserDB = {

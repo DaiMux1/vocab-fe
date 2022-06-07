@@ -1,4 +1,4 @@
-import http, { post } from './httpService';
+import http from './httpService';
 import jwtDecode from 'jwt-decode';
 import { UserLogin } from '../types/user';
 import axios, { AxiosResponse } from 'axios';
@@ -7,24 +7,27 @@ const apiEndpoint = '/auth';
 
 const tokenKey = 'token';
 
-// http.setJwt(getJwt());
-
 type Token = {
-	access_token: string;
-};
+	access_token: string
+}
+
+type CurrentUser = {
+	iat: number, 
+	id: string,
+role: number,
+status: number,
+username: string,
+}
+
+http.setJwt(getJwt());
 
 export async function login(user: UserLogin) {
+	const { data } = await http.post<Token>(apiEndpoint + '/signin', user);
 	try {
-		const { data } = await post(
-			apiEndpoint + '/signin',
-			user
-		);
-		console.log('debug', data);
+		localStorage.setItem(tokenKey, (data.access_token));
 	} catch (error) {
 		console.log(error);
 	}
-
-	// localStorage.setItem(tokenKey, jwt);
 }
 
 export async function loginWithJwt(token: any) {
@@ -39,7 +42,7 @@ export function logout() {
 	localStorage.removeItem(tokenKey);
 }
 
-export function getCurrentUser() {
+export function getCurrentUser(): CurrentUser | null {
 	try {
 		const jwt = localStorage.getItem(tokenKey) as string;
 		return jwtDecode(jwt);

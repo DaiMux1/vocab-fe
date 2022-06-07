@@ -24,14 +24,14 @@ export function setJwt(jwt: any) {
 	instance_axios.defaults.headers.common['x-auth-token'] = jwt;
 }
 
-export async function post(endPoint: string, payload: any) {
-	let newData = await axios.post('http://localhost:5000' + endPoint, payload);
-	console.log('ahihi', newData);
+// export async function post(endPoint: string, payload: any) {
+// 	let newData = await axios.post('http://localhost:5000' + endPoint, payload);
+// 	console.log('ahihi', newData);
 
-	const data = await instance_axios.post(endPoint, payload);
-	console.log("data", data);
-	return data;
-}
+// 	const data = await instance_axios.post(endPoint, payload);
+// 	console.log("data", data);
+// 	return data;
+// }
 
 export default {
 	get: instance_axios.get,
