@@ -9,8 +9,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { AxiosError } from 'axios';
+
 import { makeValidate, TextField } from 'mui-rff';
-import * as React from 'react';
+import { useState } from 'react';
 import { Form } from 'react-final-form';
 import { NavLink, Redirect } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -30,6 +32,8 @@ const schema: Yup.SchemaOf<LoginFormData> = Yup.object().shape({
 const validate = makeValidate<LoginFormData>(schema);
 
 export default function Login() {
+	const [error, setError] = useState('');
+
 	const handleSubmit = async (user: LoginFormData) => {
 		if (user.username && user.password) {
 			try {
@@ -45,7 +49,12 @@ export default function Login() {
 					window.location.replace(path);
 				}
 			} catch (e) {
-				alert(e);
+				const error = e as AxiosError;
+				if (error.response) {
+					// console.log('111', error.response);
+					const { data } = error.response;
+					setError(data.message);
+				}
 			}
 		}
 	};
@@ -101,6 +110,10 @@ export default function Login() {
 									control={<Checkbox value="remember" color="primary" />}
 									label="Remember me"
 								/> */}
+								{error && (
+									<Typography sx={{ color: 'red' }}>{error}</Typography>
+								)}
+
 								<Button
 									disabled={invalid || submitting}
 									type="submit"

@@ -21,7 +21,7 @@ instance_axios.interceptors.response.use(
 );
 
 export function setJwt(jwt: any) {
-	instance_axios.defaults.headers.common['x-auth-token'] = jwt;
+	instance_axios.defaults.headers.common['Authorization'] = jwt;
 }
 
 // export async function post(endPoint: string, payload: any) {
