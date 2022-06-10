@@ -1,6 +1,6 @@
 import http from './httpService';
 import jwtDecode from 'jwt-decode';
-import { UserLogin } from '../types/user';
+import { CurrentUser, UserLogin } from '../types/user';
 import axios, { AxiosResponse } from 'axios';
 
 const apiEndpoint = '/auth';
@@ -9,14 +9,6 @@ const tokenKey = 'token';
 
 type Token = {
 	access_token: string;
-};
-
-type CurrentUser = {
-	iat: number;
-	id: string;
-	role: number;
-	status: number;
-	username: string;
 };
 
 http.setJwt(getJwt());
@@ -46,11 +38,11 @@ export function signup(user: UserLogin) {
 	return http.post<Token>(apiEndpoint + '/signup', user);
 }
 
-export function getCurrentUser(): CurrentUser | null {
+export function getCurrentUser(): CurrentUser | undefined {
 	try {
 		const jwt = localStorage.getItem(tokenKey) as string;
 		return jwtDecode(jwt);
 	} catch (ex) {
-		return null;
+		return undefined;
 	}
 }

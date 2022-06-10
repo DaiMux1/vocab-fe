@@ -18,4 +18,12 @@ export type UserDB = {
 	role?: UserRole;
 };
 
+export type CurrentUser = {
+	iat: number;
+	id: string;
+	role: number;
+	status: number;
+	username: string;
+};
+
 export type UserLogin = Pick<UserDB, 'username' | 'password'>;
