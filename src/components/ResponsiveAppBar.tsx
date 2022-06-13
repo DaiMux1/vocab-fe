@@ -137,7 +137,7 @@ const ResponsiveAppBar = () => {
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>
-            {console.log("user", user)}
+						{console.log('user', user)}
 						{!!user ? (
 							<>
 								<IconButton
@@ -182,9 +182,9 @@ const ResponsiveAppBar = () => {
 							</>
 						) : (
 							<Button
-								key='Login'
-                component={Link}
-						    to="/login"
+								key="Login"
+								component={Link}
+								to="/login"
 								sx={{ my: 2, color: 'white', display: 'block' }}
 							>
 								Login

@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import './App.css';
 import UserContext from './components/Context/UserContext';
 import Loading from './components/Loading';
@@ -14,6 +14,8 @@ import { CurrentUser } from './types/user';
 function App() {
 	const [user, setUser] = useState<CurrentUser | undefined>();
 	const [loading, setLoading] = useState<boolean>(false);
+	let location = useLocation();
+	console.log('location', location);
 
 	useEffect(() => {
 		setLoading(true);
@@ -33,10 +35,13 @@ function App() {
 	) : (
 		<ThemeProvider theme={theme}>
 			<UserContext.Provider value={{ user }}>
-				<ResponsiveAppBar />
+				{location.pathname !== '/login' && location.pathname !== '/signup' && (
+					<ResponsiveAppBar />
+				)}
 				<Switch>
 					<Route path="/login" component={Login} />
 					<Route path="/signup" component={SignUp} />
+					{/* <Route path='/' component={} /> */}
 				</Switch>
 			</UserContext.Provider>
 		</ThemeProvider>
