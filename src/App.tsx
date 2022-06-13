@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import './App.css';
 import UserContext from './components/Context/UserContext';
+import { Home } from './components/Home';
 import Loading from './components/Loading';
 import Login from './components/Login';
 import ResponsiveAppBar from './components/ResponsiveAppBar';
@@ -41,7 +42,7 @@ function App() {
 				<Switch>
 					<Route path="/login" component={Login} />
 					<Route path="/signup" component={SignUp} />
-					{/* <Route path='/' component={} /> */}
+					<Route path='/' component={Home} />
 				</Switch>
 			</UserContext.Provider>
 		</ThemeProvider>
