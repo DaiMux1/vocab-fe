@@ -5,6 +5,7 @@ import './App.css';
 import UserContext from './components/Context/UserContext';
 import Loading from './components/Loading';
 import Login from './components/Login';
+import ResponsiveAppBar from './components/ResponsiveAppBar';
 import SignUp from './components/SignUp';
 import { theme } from './components/Theme/theme';
 import { getCurrentUser } from './services/authService';
@@ -16,7 +17,7 @@ function App() {
 
 	useEffect(() => {
 		setLoading(true);
-		if (localStorage.getItem('user')) {
+		if (localStorage.getItem('token')) {
 			// get user from backend using axios
 			// getUser(user.id).then(data => {setUser(data.response.user); setLoading(false)}).catch(localStorage.removeItem("user"))
 			// setUser(users.find(({ id }) => id === user.id));
@@ -32,6 +33,7 @@ function App() {
 	) : (
 		<ThemeProvider theme={theme}>
 			<UserContext.Provider value={{ user }}>
+				<ResponsiveAppBar />
 				<Switch>
 					<Route path="/login" component={Login} />
 					<Route path="/signup" component={SignUp} />
