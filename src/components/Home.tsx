@@ -7,6 +7,7 @@ import flashcardIcon from '../assets/icons/flashcard.png';
 import grammarIcon from '../assets/icons/grammar.png';
 import ipaIcon from '../assets/icons/ipa.png';
 import toeicIcon from '../assets/icons/toeic.png';
+import { Container } from '@mui/material';
 
 const FEATURE_LIST = [
 	{
@@ -54,18 +55,20 @@ export function Home() {
 
 	return (
 		<div className="container my-10">
-			<Grid container spacing={3}>
-				{FEATURE_LIST.map((box, index) => (
-					<Grid item xs={12} md={6} lg={4} key={index}>
-						<FeatureBox
-							imgUrl={box.imgUrl}
-							title={box.title}
-							to={box.to}
-							subTitle={box.subTitle}
-						/>
-					</Grid>
-				))}
-			</Grid>
+			<Container fixed sx={{ marginTop: 2 }}>
+				<Grid container spacing={3}>
+					{FEATURE_LIST.map((box, index) => (
+						<Grid item xs={12} md={6} lg={4} key={index}>
+							<FeatureBox
+								imgUrl={box.imgUrl}
+								title={box.title}
+								to={box.to}
+								subTitle={box.subTitle}
+							/>
+						</Grid>
+					))}
+				</Grid>
+			</Container>
 		</div>
 	);
 }

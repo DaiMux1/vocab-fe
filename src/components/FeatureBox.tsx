@@ -1,3 +1,4 @@
+import { Box, Typography } from '@mui/material';
 import Link from '@mui/material/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -6,8 +7,8 @@ import React from 'react';
 
 const style = {
 	icon: {
-		width: '4.2rem',
-		height: '4.2rem',
+		width: '2.2rem',
+		height: '2.2rem',
 		marginRight: '1.4rem'
 	},
 
@@ -32,7 +33,6 @@ const style = {
 	}
 };
 
-
 export default function FeatureBox({
 	to,
 	imgUrl,
@@ -49,17 +49,21 @@ export default function FeatureBox({
 			href={to}
 			sx={theme => ({
 				padding: '1.8rem 1.2rem',
-				boxShadow: 'var(--box-shadow-2)',
-				borderRadius: 'var(--sm-border-radius)',
+				boxShadow:
+					'0px 2px 1px -1px rgba(0,0,0,0.18),0px 1px 6px 0px rgba(0,0,0,0.12),0px 1px 4px 0px rgba(0,0,0,0.08)',
+				borderRadius: '4px',
 				cursor: 'pointer',
-				backgroundColor: 'var(--bg-color-accent)',
+				backgroundColor: '#f1f1f1',
 				transition: 'all 0.25s',
 
 				minHeight: '8rem',
-				height: '100%',
+				// height: '100%',
+				textDecoration: 'none',
+				display: 'flex',
+				alignItems: 'center',
 
 				'&:hover, &:active': {
-					backgroundColor: 'var(--hover-color)'
+					backgroundColor: '#e5e5e5'
 				},
 
 				[theme.breakpoints.up('sm')]: {
@@ -67,12 +71,21 @@ export default function FeatureBox({
 				},
 
 				[theme.breakpoints.up('md')]: {
-					minHeight: '18rem'
+					minHeight: '12rem'
 				}
 			})}
 			// className={`${classes.root} flex-center--ver w-100`}
 		>
-			<img className={JSON.stringify(style.icon)} src={imgUrl} alt="Icon" />
+			<Box
+				sx={{
+					width: '4.2rem',
+					height: '4.2rem',
+					marginRight: '1.4rem'
+				}}
+				component="img"
+				src={imgUrl}
+				alt="Icon"
+			></Box>
 			<div>
 				<h2 className={JSON.stringify(style.title)}>{title}</h2>
 				<p className={JSON.stringify(style.subTitle)}>{subTitle}</p>
