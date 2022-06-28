@@ -6,39 +6,40 @@ import favoriteIcon from '../assets/icons/favorite.png';
 import flashcardIcon from '../assets/icons/flashcard.png';
 import grammarIcon from '../assets/icons/grammar.png';
 import ipaIcon from '../assets/icons/ipa.png';
+import searchIcon from '../assets/icons/search.png';
 import toeicIcon from '../assets/icons/toeic.png';
 import { Container } from '@mui/material';
 
 const FEATURE_LIST = [
 	{
-		title: 'Bảng phiên âm (IPA)',
+		title: 'Tạo list',
 		subTitle:
-			'Luyện nghe, phát âm chuẩn với 44 âm trong bảng phiên âm quốc tế IPA',
+			'Tạo list từ vựng phục vụ nhu cầu cá nhân',
 		imgUrl: ipaIcon,
-		to: '/'
+		to: '/create-list'
 	},
 	{
-		title: '1000+ câu giao tiếp',
-		subTitle: 'Luyện nghe, nói câu tiếng Anh giao tiếp hàng ngày cùng Dyno',
-		imgUrl: grammarIcon,
-		to: '/'
-	},
-	{
-		title: 'Từ vựng với Flashcard',
-		subTitle:
-			'Flashcard phương pháp học từ vựng nổi tiếng. Nay hoàn toàn miễn phí trên Dynonary',
+		title: 'List của tôi',
+		subTitle: 'Các list từ vựng của bạn đã tạo',
 		imgUrl: flashcardIcon,
 		to: '/'
 	},
 	{
-		title: 'Từ điển trong Dynonary',
-		subTitle: 'Danh sách từ vựng được phân loại theo cấp độ, loại từ, ...',
-		imgUrl: dictionaryIcon,
+		title: 'Tìm kiếm list ',
+		subTitle:
+			'Tìm kiếm list theo tên và tác giả',
+		imgUrl: searchIcon,
 		to: '/'
 	},
 	{
-		title: 'Từ vựng TOEIC',
-		subTitle: 'Các từ vựng thường gặp trong đề thi Toeic',
+		title: 'List từ vựng yêu thích',
+		subTitle: 'List từ vựng mà bạn yêu thích',
+		imgUrl: favoriteIcon,
+		to: '/'
+	},
+	{
+		title: 'Bảng phiên âm (IPA)',
+		subTitle: 'Luyện nghe, phát âm chuẩn với 44 âm trong bảng phiên âm quốc tế IPA',
 		imgUrl: toeicIcon,
 		to: '/'
 	},

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import './App.css';
 import UserContext from './components/Context/UserContext';
+import { CreateList } from './components/CreateList';
 import { Home } from './components/Home';
 import Loading from './components/Loading';
 import Login from './components/Login';
@@ -16,7 +17,7 @@ function App() {
 	const [user, setUser] = useState<CurrentUser | undefined>();
 	const [loading, setLoading] = useState<boolean>(false);
 	let location = useLocation();
-	console.log('location', location);
+	// console.log('location', location);
 
 	useEffect(() => {
 		setLoading(true);
@@ -42,6 +43,7 @@ function App() {
 				<Switch>
 					<Route path="/login" component={Login} />
 					<Route path="/signup" component={SignUp} />
+					<Route path="/create-list" component={CreateList} />
 					<Route path='/' component={Home} />
 				</Switch>
 			</UserContext.Provider>
