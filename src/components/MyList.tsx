@@ -13,7 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FilterList } from '../types/filter';
 import _ from 'lodash';
 import Paper from '@mui/material/Paper';
@@ -23,19 +23,59 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ListReturn } from '../types/list';
+import PublicIcon from '@mui/icons-material/Public';
+import ConfirmDeleteDialog from './ConfirmDeleteDialog';
+import { getMyList } from '../services/listService';
 
 function MyList() {
 	const [search, setSearch] = useState('');
-	const [lists, setLists] = useState<ListReturn>([]);
+	const [lists, setLists] = useState<ListReturn[]>([]);
+	const [listId, setListId] = useState('');
+	const [open, setOpen] = useState(false);
 
 	const [filter, setFilter] = useState<FilterList>({
 		search: '',
 		page: 1
 	});
 
+	const getData = async (filter: FilterList) => {
+		const { data } = await getMyList(filter);
+		console.log(data);
+		setLists(data as ListReturn[]);
+	};
+
+	useEffect(() => {
+		getData(filter);
+		return () => {};
+	}, [filter]);
+
 	const debounce = _.debounce((filter: FilterList) => {
 		setFilter(filter);
 	}, 1000);
+
+	const handleOpenDeleteDialog = (id: string) => {
+		setListId(id);
+		setOpen(true);
+	};
+
+	const handleCloseDialog = () => {
+		setOpen(false);
+		setListId('');
+	};
+
+	const handleDelete = async () => {
+		console.log('delete');
+		// try {
+		// 	await deleteBook(bookId as number);
+		// } catch (error) {
+		// 	alert(error);
+		// }
+
+		// const newBooks = books.filter(book => book.id !== bookId);
+		// setBooks(newBooks);
+
+		// setOpen(false);
+	};
 
 	return (
 		<Container maxWidth="xl">
@@ -81,13 +121,13 @@ function MyList() {
 				<Box>
 					<TableContainer component={Paper}>
 						<Table sx={{ minWidth: 650 }} aria-label="simple table">
-							<TableHead>
+							{/* <TableHead>
 								<TableRow>
-									<TableCell>Tên List</TableCell>
+									<TableCell></TableCell>
 									<TableCell align="right"></TableCell>
 									<TableCell align="right"></TableCell>
 								</TableRow>
-							</TableHead>
+							</TableHead> */}
 							<TableBody>
 								{lists.map(list => (
 									<TableRow
@@ -100,14 +140,15 @@ function MyList() {
 										<TableCell component="th" scope="row">
 											{list.name}
 										</TableCell>
+										<TableCell align="right"></TableCell>
+										{/* <TableCell align="right">{list.numberOfDownload}</TableCell>
+										<TableCell align="right">{list.updateAt}</TableCell> */}
 										<TableCell align="right">
-											<img width="50px" height="60px" src={list.img} alt="" />
-										</TableCell>
-										<TableCell align="right">{list.author}</TableCell>
-										<TableCell align="right">{list.numberOfRental}</TableCell>
-										<TableCell align="right">{list.numberOfDownload}</TableCell>
-										<TableCell align="right">{list.updateAt}</TableCell>
-										<TableCell align="right">
+											{list.public === 1 && (
+												<IconButton>
+													<PublicIcon />
+												</IconButton>
+											)}
 											<IconButton
 												to={`/admin/books/${list.id}`}
 												component={Link}
@@ -125,7 +166,7 @@ function MyList() {
 							</TableBody>
 						</Table>
 					</TableContainer>
-					<Box
+					{/* <Box
 						alignItems="center"
 						sx={{
 							'& ul': {
@@ -141,7 +182,7 @@ function MyList() {
 								setFilter({ ...filter, page: value });
 							}}
 						/>
-					</Box>
+					</Box> */}
 					<ConfirmDeleteDialog
 						open={open}
 						onClose={handleCloseDialog}
