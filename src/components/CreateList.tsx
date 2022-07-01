@@ -29,7 +29,6 @@ const checkFormInput = (form: Vocab[]) => {
 export function CreateList() {
 	const [error, setError] = useState('');
 	const [name, setName] = useState('');
-	const [flag, setFlag] = useState(true);
 	// const [formInput, setFormInput] = useReducer(
 	// 	(state: Vocab[], action: { index: number; value?: Partial<Vocab> }) => {
 	// 		if (action.index === state.length) {
@@ -68,24 +67,24 @@ export function CreateList() {
 		const name = evt.target.name;
 		const newValue = evt.target.value;
 		words[index] = { ...words[index], ...{ [name]: newValue } };
-		setWords(words);
-		setFlag(!flag);
+		setWords([...words]);
 	};
 
 	const handleAddWord = () => {
-		words.push({
-			word: '',
-			meaning: '',
-			example: ''
-		});
-		setWords(words);
-		setFlag(!flag);
+		const newWords = [
+			...words,
+			{
+				word: '',
+				meaning: '',
+				example: ''
+			}
+		];
+		setWords(newWords);
 	};
 
 	const handleDelete = (index: number) => {
 		let newWords = words.filter((_, ind) => ind !== index);
 		setWords(newWords);
-		setFlag(!flag);
 	};
 
 	const handleSubmit = async (
