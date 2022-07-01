@@ -26,4 +26,10 @@ export type CurrentUser = {
 	username: string;
 };
 
+export type Author = {
+	username: string;
+	status: number;
+	role: number;
+};
+
 export type UserLogin = Pick<UserDB, 'username' | 'password'>;

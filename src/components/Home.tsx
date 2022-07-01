@@ -13,8 +13,7 @@ import { Container } from '@mui/material';
 const FEATURE_LIST = [
 	{
 		title: 'Tạo list',
-		subTitle:
-			'Tạo list từ vựng phục vụ nhu cầu cá nhân',
+		subTitle: 'Tạo list từ vựng phục vụ nhu cầu cá nhân',
 		imgUrl: ipaIcon,
 		to: '/create-list'
 	},
@@ -22,12 +21,11 @@ const FEATURE_LIST = [
 		title: 'List của tôi',
 		subTitle: 'Các list từ vựng của bạn đã tạo',
 		imgUrl: flashcardIcon,
-		to: '/'
+		to: '/my-list'
 	},
 	{
 		title: 'Tìm kiếm list ',
-		subTitle:
-			'Tìm kiếm list theo tên và tác giả',
+		subTitle: 'Tìm kiếm list theo tên và tác giả',
 		imgUrl: searchIcon,
 		to: '/'
 	},
@@ -39,7 +37,8 @@ const FEATURE_LIST = [
 	},
 	{
 		title: 'Bảng phiên âm (IPA)',
-		subTitle: 'Luyện nghe, phát âm chuẩn với 44 âm trong bảng phiên âm quốc tế IPA',
+		subTitle:
+			'Luyện nghe, phát âm chuẩn với 44 âm trong bảng phiên âm quốc tế IPA',
 		imgUrl: toeicIcon,
 		to: '/'
 	},

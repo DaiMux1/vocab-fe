@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@mui/material';
+import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import './App.css';
@@ -7,6 +8,8 @@ import { CreateList } from './components/CreateList';
 import { Home } from './components/Home';
 import Loading from './components/Loading';
 import Login from './components/Login';
+import MyList from './components/MyList';
+import PrivateRoute from './components/PrivateRoute';
 import ResponsiveAppBar from './components/ResponsiveAppBar';
 import SignUp from './components/SignUp';
 import { theme } from './components/Theme/theme';
@@ -35,19 +38,21 @@ function App() {
 	return loading ? (
 		<Loading />
 	) : (
-		<ThemeProvider theme={theme}>
-			<UserContext.Provider value={{ user }}>
-				{location.pathname !== '/login' && location.pathname !== '/signup' && (
-					<ResponsiveAppBar />
-				)}
-				<Switch>
-					<Route path="/login" component={Login} />
-					<Route path="/signup" component={SignUp} />
-					<Route path="/create-list" component={CreateList} />
-					<Route path='/' component={Home} />
-				</Switch>
-			</UserContext.Provider>
-		</ThemeProvider>
+		<SnackbarProvider maxSnack={3}>
+			<ThemeProvider theme={theme}>
+				<UserContext.Provider value={{ user }}>
+					{location.pathname !== '/login' &&
+						location.pathname !== '/signup' && <ResponsiveAppBar />}
+					<Switch>
+						<Route path="/login" component={Login} />
+						<Route path="/signup" component={SignUp} />
+						<PrivateRoute path="/create-list" component={CreateList} />
+						<PrivateRoute path="/my-list" component={MyList} />
+						<Route path="/" component={Home} />
+					</Switch>
+				</UserContext.Provider>
+			</ThemeProvider>
+		</SnackbarProvider>
 	);
 }
 

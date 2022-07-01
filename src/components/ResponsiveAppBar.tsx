@@ -17,11 +17,15 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useContext } from 'react';
 import UserContext from './Context/UserContext';
 import { Link } from 'react-router-dom';
+import { logout } from '../services/authService';
+import { useHistory } from 'react-router-dom';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = () => {
+	let history = useHistory();
+
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
 		null
 	);
@@ -44,6 +48,13 @@ const ResponsiveAppBar = () => {
 
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
+	};
+
+	const handleSettings = (setting: string) => {
+		if (setting === 'Logout') {
+			logout();
+			history.push('/login');
+		}
 	};
 
 	return (
@@ -100,7 +111,12 @@ const ResponsiveAppBar = () => {
 						>
 							{pages.map(page => (
 								<MenuItem key={page} onClick={handleCloseNavMenu}>
-									<Typography textAlign="center">{page}</Typography>
+									<Typography
+										onClick={() => console.log('aaaa')}
+										textAlign="center"
+									>
+										{page}
+									</Typography>
 								</MenuItem>
 							))}
 						</Menu>
@@ -175,7 +191,9 @@ const ResponsiveAppBar = () => {
 								>
 									{settings.map(setting => (
 										<MenuItem key={setting} onClick={handleCloseUserMenu}>
-											<Typography textAlign="center">{setting}</Typography>
+											<Button onClick={() => handleSettings(setting)}>
+												<Typography textAlign="center">{setting}</Typography>
+											</Button>
 										</MenuItem>
 									))}
 								</Menu>

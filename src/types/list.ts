@@ -1,3 +1,5 @@
+import { Author } from './user';
+
 export type Vocab = {
 	word: string;
 	meaning: string;
@@ -6,5 +8,14 @@ export type Vocab = {
 
 export type CreateList = {
 	name: string;
+	vocab: Vocab[];
+};
+
+export type ListReturn = {
+	id: string;
+	name: string;
+	public: number;
+	star: number;
+	author: Author;
 	vocab: Vocab[];
 };
