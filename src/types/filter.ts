@@ -1,4 +1,4 @@
 export type FilterList = {
 	search: string;
-	page: number;
+	page?: number;
 };

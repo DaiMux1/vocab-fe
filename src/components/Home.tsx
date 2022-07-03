@@ -27,7 +27,7 @@ const FEATURE_LIST = [
 		title: 'Tìm kiếm list ',
 		subTitle: 'Tìm kiếm list theo tên và tác giả',
 		imgUrl: searchIcon,
-		to: '/'
+		to: '/public-list'
 	},
 	{
 		title: 'List từ vựng yêu thích',

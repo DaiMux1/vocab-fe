@@ -3,13 +3,13 @@ import {
 	Button,
 	Container,
 	IconButton,
+	Pagination,
 	TableContainer,
 	TextField,
 	Typography
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
@@ -20,32 +20,48 @@ import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ListReturn } from '../types/list';
 import PublicIcon from '@mui/icons-material/Public';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog';
-import { getMyList } from '../services/listService';
+import { deleteList, getMyList, updateNameList } from '../services/listService';
+import { useSnackbar } from 'notistack';
+import ConfirmEditDialog from './ConfirmEditDialog';
+import { SIZE_PAGINATION } from '../constants/constans';
+import Loading from './Loading';
 
 function MyList() {
+	const history = useHistory();
 	const [search, setSearch] = useState('');
 	const [lists, setLists] = useState<ListReturn[]>([]);
-	const [listId, setListId] = useState('');
-	const [open, setOpen] = useState(false);
+	const [listId, setListId] = useState<string>('');
+	const [openDetele, setOpenDelete] = useState(false);
+	const [openEdit, setOpenEdit] = useState(false);
+	const [page, setPage] = useState(1);
+	const [totalPage, setTotalPage] = useState(1);
+	const { enqueueSnackbar } = useSnackbar();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [filter, setFilter] = useState<FilterList>({
-		search: '',
-		page: 1
+		search: ''
 	});
 
 	const getData = async (filter: FilterList) => {
 		const { data } = await getMyList(filter);
-		console.log(data);
 		setLists(data as ListReturn[]);
+		setTotalPage(
+			Math.ceil((data as ListReturn[]).length / SIZE_PAGINATION) === 0
+				? 1
+				: Math.ceil((data as ListReturn[]).length / SIZE_PAGINATION)
+		);
 	};
 
 	useEffect(() => {
+		setIsLoading(true);
+
 		getData(filter);
+		setIsLoading(false);
+
 		return () => {};
 	}, [filter]);
 
@@ -55,26 +71,61 @@ function MyList() {
 
 	const handleOpenDeleteDialog = (id: string) => {
 		setListId(id);
-		setOpen(true);
+		setOpenDelete(true);
 	};
 
 	const handleCloseDialog = () => {
-		setOpen(false);
+		setOpenDelete(false);
 		setListId('');
 	};
 
 	const handleDelete = async () => {
-		console.log('delete');
-		// try {
-		// 	await deleteBook(bookId as number);
-		// } catch (error) {
-		// 	alert(error);
-		// }
+		let flag = true;
+		try {
+			await deleteList(listId);
+			enqueueSnackbar('Xóa list thành công', { variant: 'success' });
+		} catch (error) {
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+			flag = false;
+		}
 
-		// const newBooks = books.filter(book => book.id !== bookId);
-		// setBooks(newBooks);
+		if (flag) {
+			const newLists = lists.filter(list => list.id !== listId);
+			setLists(newLists);
+			setOpenDelete(false);
+		}
+	};
 
-		// setOpen(false);
+	const handleOpenEditDialog = (id: string) => {
+		setListId(id);
+		setOpenEdit(true);
+	};
+
+	const handleCloseEditDialog = () => {
+		setOpenEdit(false);
+		setListId('');
+	};
+
+	const handleEdit = async (newName: string) => {
+		let flag = true;
+		try {
+			await updateNameList(listId, newName);
+			enqueueSnackbar('Cập nhật tên list thành công', { variant: 'success' });
+		} catch (error) {
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+			flag = false;
+		}
+
+		if (flag) {
+			const newLists = lists.map(list => {
+				if (list.id === listId) {
+					list.name = newName;
+				}
+				return list;
+			});
+			setLists(newLists);
+			setOpenEdit(false);
+		}
 	};
 
 	return (
@@ -96,7 +147,7 @@ function MyList() {
 									search: e.target.value
 								});
 							}}
-							placeholder="Search"
+							placeholder="Tìm list"
 							InputProps={{
 								endAdornment: (
 									<IconButton sx={{ p: '10px' }} aria-label="search">
@@ -110,83 +161,117 @@ function MyList() {
 						<Button
 							component={Link}
 							to="/create-list"
-							sx={{ mx: 3 }}
+							sx={{ mx: 3, whiteSpace: 'nowrap' }}
 							variant="contained"
-							startIcon={<AddIcon />}
 						>
-							Add
+							Tạo List mới
 						</Button>
 					</Box>
 				</Box>
 				<Box>
 					<TableContainer component={Paper}>
 						<Table sx={{ minWidth: 650 }} aria-label="simple table">
-							{/* <TableHead>
-								<TableRow>
-									<TableCell></TableCell>
-									<TableCell align="right"></TableCell>
-									<TableCell align="right"></TableCell>
-								</TableRow>
-							</TableHead> */}
 							<TableBody>
-								{lists.map(list => (
-									<TableRow
-										key={list.id}
-										sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-										hover
-										// onClick={}
-										// component={Button}
-									>
-										<TableCell component="th" scope="row">
-											{list.name}
-										</TableCell>
-										<TableCell align="right"></TableCell>
-										{/* <TableCell align="right">{list.numberOfDownload}</TableCell>
-										<TableCell align="right">{list.updateAt}</TableCell> */}
-										<TableCell align="right">
-											{list.public === 1 && (
-												<IconButton>
-													<PublicIcon />
-												</IconButton>
-											)}
-											<IconButton
-												to={`/admin/books/${list.id}`}
-												component={Link}
+								{isLoading ? (
+									<Loading />
+								) : (
+									lists
+										.slice((page - 1) * SIZE_PAGINATION, page * SIZE_PAGINATION)
+										.map(list => (
+											<TableRow
+												key={list.id}
+												sx={{
+													'&:last-child td, &:last-child th': { border: 0 },
+													// cursor: 'pointer',
+													textDecoration: 'none',
+													color: 'white'
+												}}
+												hover
+												// classes={{ hover: 'cursor' }}
+												// to={`/my-list/${list.id}`}
+												// component={Link}
 											>
-												<EditIcon />
-											</IconButton>
-											<IconButton
-												onClick={() => handleOpenDeleteDialog(list.id)}
-											>
-												<DeleteIcon sx={{ color: '#F26464' }} />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								))}
+												{/* <Box
+													sx={{
+														'&:last-child td, &:last-child th': { border: 0 },
+														cursor: 'pointer',
+														textDecoration: 'none',
+														color: 'white'
+													}}
+													// classes={{ hover: 'cursor' }}
+													to={`/my-list/${list.id}`}
+													component={Link}
+												> */}
+												<TableCell
+													sx={{ cursor: 'pointer' }}
+													component="th"
+													scope="row"
+													style={{ width: 800 }}
+													onClick={() => {
+														history.push(`/my-list/${list.id}`);
+													}}
+												>
+													<Typography variant="h4">{list.name}</Typography>
+												</TableCell>
+												{/* </Box> */}
+
+												<TableCell align="right"></TableCell>
+												<TableCell align="right">
+													{list.public === 1 ? (
+														<IconButton>
+															<PublicIcon />
+														</IconButton>
+													) : (
+														<IconButton>Yêu cầu public</IconButton>
+													)}
+													<IconButton
+														// to={`/admin/books/${list.id}`}
+														// component={Link}
+														onClick={() => handleOpenEditDialog(list.id)}
+													>
+														<EditIcon />
+													</IconButton>
+													<IconButton
+														onClick={() => handleOpenDeleteDialog(list.id)}
+													>
+														<DeleteIcon sx={{ color: '#F26464' }} />
+													</IconButton>
+												</TableCell>
+											</TableRow>
+										))
+								)}
 							</TableBody>
 						</Table>
 					</TableContainer>
-					{/* <Box
+					<Box
 						alignItems="center"
 						sx={{
 							'& ul': {
 								margin: 2,
-								justifyContent: 'center'
+								justifyContent: 'center',
+								position: 'fixed',
+								bottom: 5,
+								right: '40%'
 							}
 						}}
 					>
 						<Pagination
-							count={10}
-							page={filter.page || 1}
-							onChange={(e, value: number) => {
-								setFilter({ ...filter, page: value });
+							count={totalPage}
+							page={page || 1}
+							onChange={(_, value: number) => {
+								setPage(value);
 							}}
 						/>
-					</Box> */}
+					</Box>
 					<ConfirmDeleteDialog
-						open={open}
+						open={openDetele}
 						onClose={handleCloseDialog}
 						onDelete={handleDelete}
+					/>
+					<ConfirmEditDialog
+						open={openEdit}
+						onClose={handleCloseEditDialog}
+						onEdit={handleEdit}
 					/>
 				</Box>
 			</Box>

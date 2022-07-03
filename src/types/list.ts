@@ -19,3 +19,9 @@ export type ListReturn = {
 	author: Author;
 	vocab: Vocab[];
 };
+
+export type UpdateVocabInList = {
+	name: string;
+	oldVocab: Vocab;
+	newVocab: Vocab;
+};

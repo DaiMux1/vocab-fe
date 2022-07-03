@@ -9,7 +9,9 @@ import { Home } from './components/Home';
 import Loading from './components/Loading';
 import Login from './components/Login';
 import MyList from './components/MyList';
+import MyListDetail from './components/MyListDetail';
 import PrivateRoute from './components/PrivateRoute';
+import PubList from './components/PubList';
 import ResponsiveAppBar from './components/ResponsiveAppBar';
 import SignUp from './components/SignUp';
 import { theme } from './components/Theme/theme';
@@ -47,7 +49,9 @@ function App() {
 						<Route path="/login" component={Login} />
 						<Route path="/signup" component={SignUp} />
 						<PrivateRoute path="/create-list" component={CreateList} />
+						<PrivateRoute path="/my-list/:id" component={MyListDetail} />
 						<PrivateRoute path="/my-list" component={MyList} />
+						<Route path="/public-list" component={PubList} />
 						<Route path="/" component={Home} />
 					</Switch>
 				</UserContext.Provider>
