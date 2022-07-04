@@ -51,6 +51,8 @@ function PubList() {
 	});
 
 	const getData = async (filter: FilterList) => {
+		setLoadable(true);
+		setPage(1);
 		const { data } = await getPubList(filter.search, page, SIZE_PAGINATION);
 		setLists(data);
 	};
