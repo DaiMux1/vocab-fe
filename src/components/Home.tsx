@@ -34,20 +34,20 @@ const FEATURE_LIST = [
 		subTitle: 'List từ vựng mà bạn yêu thích',
 		imgUrl: favoriteIcon,
 		to: '/'
-	},
-	{
-		title: 'Bảng phiên âm (IPA)',
-		subTitle:
-			'Luyện nghe, phát âm chuẩn với 44 âm trong bảng phiên âm quốc tế IPA',
-		imgUrl: toeicIcon,
-		to: '/'
-	},
-	{
-		title: 'Từ vựng yêu thích của bạn',
-		imgUrl: favoriteIcon,
-		subTitle: 'Danh sách những từ vựng yêu thích mà bạn đã lưu',
-		to: '/'
 	}
+	// {
+	// 	title: 'Bảng phiên âm (IPA)',
+	// 	subTitle:
+	// 		'Luyện nghe, phát âm chuẩn với 44 âm trong bảng phiên âm quốc tế IPA',
+	// 	imgUrl: toeicIcon,
+	// 	to: '/'
+	// },
+	// {
+	// 	title: 'Từ vựng yêu thích của bạn',
+	// 	imgUrl: favoriteIcon,
+	// 	subTitle: 'Danh sách những từ vựng yêu thích mà bạn đã lưu',
+	// // 	to: '/'
+	// }
 ];
 
 export function Home() {

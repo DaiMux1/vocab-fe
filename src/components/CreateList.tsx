@@ -152,7 +152,7 @@ export function CreateList() {
 		<>
 			<Container maxWidth="xl">
 				<Box mx={10}>
-					<Typography my={2} variant="h4" sx={{ color: '#1976d2' }}>
+					<Typography my={2} variant="h4">
 						Tạo List
 					</Typography>
 					<TextField
@@ -165,7 +165,7 @@ export function CreateList() {
 							setName(e.target.value);
 						}}
 					/>
-					<Typography my={2} variant="h4" sx={{ color: '#1976d2' }}>
+					<Typography my={2} variant="h4">
 						Từ vựng
 					</Typography>
 					{words.map((vocab, index) => newWordForm(vocab, index))}

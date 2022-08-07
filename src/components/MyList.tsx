@@ -131,7 +131,7 @@ function MyList() {
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
-				<Typography my={2} variant="h4" sx={{ color: '#1976d2' }}>
+				<Typography my={2} variant="h4">
 					List của tôi
 				</Typography>
 				<Box marginTop={3}>

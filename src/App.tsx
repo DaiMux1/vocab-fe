@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
@@ -41,7 +41,12 @@ function App() {
 		<Loading />
 	) : (
 		<SnackbarProvider maxSnack={3}>
+			<link
+				href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+				rel="stylesheet"
+			/>
 			<ThemeProvider theme={theme}>
+				<CssBaseline />
 				<UserContext.Provider value={{ user }}>
 					{location.pathname !== '/login' &&
 						location.pathname !== '/signup' && <ResponsiveAppBar />}

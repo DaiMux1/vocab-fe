@@ -143,7 +143,7 @@ function MyListDetail() {
 				name: list?.name as string,
 				vocab: [newVocab as Vocab]
 			});
-			enqueueSnackbar('Cập nhật tên list thành công', { variant: 'success' });
+			enqueueSnackbar('Thêm từ vựng thành công', { variant: 'success' });
 		} catch (error) {
 			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
 			flag = false;
@@ -200,7 +200,7 @@ function MyListDetail() {
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
-				<Typography my={2} variant="h4" sx={{ color: '#1976d2' }}>
+				<Typography my={2} variant="h4">
 					{list?.name}
 				</Typography>
 				<Box marginTop={3}>
@@ -307,10 +307,16 @@ function MyListDetail() {
 						<Table sx={{ minWidth: 650 }} aria-label="simple table">
 							<TableHead>
 								<TableRow>
-									<TableCell>Từ vựng</TableCell>
-									<TableCell align="left">Nghĩa của từ</TableCell>
+									<TableCell>
+										<Typography variant="h4">Từ vựng</Typography>
+									</TableCell>
+									<TableCell align="left">
+										<Typography variant="h4" sx={{ whiteSpace: 'nowrap' }}>
+											Nghĩa của từ
+										</Typography>
+									</TableCell>
 									<TableCell sx={{ ml: 30 }} align="left">
-										Ví dụ
+										<Typography variant="h4">Ví dụ</Typography>
 									</TableCell>
 									<TableCell align="right"></TableCell>
 								</TableRow>
@@ -332,13 +338,19 @@ function MyListDetail() {
 												classes={{ hover: 'cursor' }}
 											>
 												<TableCell align="left" style={{ width: 220 }}>
-													<Typography variant="h4">{vocab.word}</Typography>
+													<Typography variant="subtitle1">
+														{vocab.word}
+													</Typography>
 												</TableCell>
 												<TableCell align="left" style={{ width: 220 }}>
-													<Typography variant="h4">{vocab.meaning}</Typography>
+													<Typography variant="subtitle1">
+														{vocab.meaning}
+													</Typography>
 												</TableCell>
 												<TableCell sx={{ ml: 30 }} align="left">
-													<Typography variant="h4">{vocab.example}</Typography>
+													<Typography variant="subtitle1">
+														{vocab.example}
+													</Typography>
 												</TableCell>
 												<TableCell align="right">
 													<IconButton
