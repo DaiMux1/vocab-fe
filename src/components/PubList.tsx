@@ -3,16 +3,13 @@ import {
 	Button,
 	Container,
 	IconButton,
-	listClasses,
-	Pagination,
+	Rating,
 	TableContainer,
 	TextField,
 	Typography
 } from '@mui/material';
 import { Link, useHistory } from 'react-router-dom';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import { useEffect, useState } from 'react';
 import { FilterList } from '../types/filter';
@@ -23,16 +20,8 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { ListReturn } from '../types/list';
-import PublicIcon from '@mui/icons-material/Public';
-import ConfirmDeleteDialog from './ConfirmDeleteDialog';
-import {
-	deleteList,
-	getMyList,
-	getPubList,
-	updateNameList
-} from '../services/listService';
+import { getPubList } from '../services/listService';
 import { useSnackbar } from 'notistack';
-import ConfirmEditDialog from './ConfirmEditDialog';
 import { SIZE_PAGINATION } from '../constants/constans';
 import Loading from './Loading';
 
@@ -80,10 +69,12 @@ function PubList() {
 		}
 	};
 
+	console.log('list', lists);
+
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
-				<Typography my={2} variant="h4" sx={{ color: '#1976d2' }}>
+				<Typography my={2} variant="h4">
 					Tìm kiếm list
 				</Typography>
 				<Box marginTop={3}>
@@ -131,7 +122,7 @@ function PubList() {
 											}}
 											hover
 											onClick={() => {
-												history.push(`/my-list/${list.id}`);
+												history.push(`/public-list/${list.id}`);
 											}}
 										>
 											<TableCell
@@ -148,28 +139,14 @@ function PubList() {
 												</Typography>
 											</TableCell>
 
-											<TableCell align="right"></TableCell>
-											{/* <TableCell align="right">
-												{list.public === 1 ? (
-													<IconButton>
-														<PublicIcon />
-													</IconButton>
-												) : (
-													<IconButton>Yêu cầu public</IconButton>
-												)}
-												<IconButton
-													// to={`/admin/books/${list.id}`}
-													// component={Link}
-													onClick={() => handleOpenEditDialog(list.id)}
-												>
-													<EditIcon />
-												</IconButton>
-												<IconButton
-													onClick={() => handleOpenDeleteDialog(list.id)}
-												>
-													<DeleteIcon sx={{ color: '#F26464' }} />
-												</IconButton>
-											</TableCell> */}
+											<TableCell align="right">
+												<Rating
+													name="half-rating-read"
+													defaultValue={list.star}
+													precision={0.5}
+													readOnly
+												/>
+											</TableCell>
 										</TableRow>
 									))
 								)}

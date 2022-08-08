@@ -6,6 +6,7 @@ import {
 	IconButton,
 	Pagination,
 	Paper,
+	Rating,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,7 +17,7 @@ import {
 	Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Redirect, useHistory, useParams } from 'react-router-dom';
 import {
 	addVocabToList,
 	getMyListDetail,
@@ -33,8 +34,11 @@ import { useSnackbar } from 'notistack';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog';
+import { getCurrentUser } from '../services/authService';
+import { get } from 'dot-prop';
 
-function MyListDetail() {
+function PubListDetail() {
+	let history = useHistory();
 	const { id } = useParams<{ id: string }>();
 	const [list, setList] = useState<ListReturn | undefined>();
 	const [listShow, setListShow] = useState<Vocab[] | undefined>();
@@ -45,19 +49,27 @@ function MyListDetail() {
 	const [page, setPage] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
 	const [openDetele, setOpenDelete] = useState(false);
+	const [isMyList, setIsMyList] = useState(false);
+	const [voteStar, setVoteStar] = useState(0);
+
+	console.log('voteStar', voteStar);
 
 	const { enqueueSnackbar } = useSnackbar();
 
 	const getData = async () => {
 		const { data } = await getMyListDetail(id);
+
+		console.log('data', data);
+		console.log('getCurrentUser()', getCurrentUser());
+
+		if (get(data, 'author.username') === getCurrentUser()?.username) {
+			setIsMyList(true);
+		}
 		setList(data);
 	};
+
 	console.log('list', list);
 	console.log('listShow', listShow);
-
-	// const debounce = _.debounce((search: string) => {
-	// 	setSearch(search);
-	// }, 1000);
 
 	useEffect(() => {
 		getData();
@@ -78,9 +90,14 @@ function MyListDetail() {
 			);
 
 			setListShow(vocab);
+			setVoteStar(list.star);
 			// console.log(list?.vocab.filter(v => v.word.match(new RegExp(search))));
 		}
 	}, [search, list]);
+
+	if (isMyList) {
+		return <Redirect to={`/my-list/${id}`} />;
+	}
 
 	const handleOpenEditDialog = (word: string) => {
 		setVocab(word);
@@ -211,6 +228,7 @@ function MyListDetail() {
 							value={search}
 							onChange={e => {
 								setSearch(e.target.value);
+								// debounce(e.target.value);
 							}}
 							placeholder="Tìm từ"
 							InputProps={{
@@ -237,9 +255,20 @@ function MyListDetail() {
 								});
 							}}
 						>
-							Thêm từ mới
+							Góp từ vựng
 						</Button>
-						{list?.public === 0 && (
+						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+							<Rating
+								name="simple-controlled"
+								precision={0.5}
+								value={voteStar}
+								onChange={(event, newValue) => {
+									setVoteStar(newValue as number);
+								}}
+							/>
+						</Box>
+
+						{/* {list?.public === 0 && (
 							<Button
 								component={Link}
 								to="/create-list"
@@ -248,7 +277,7 @@ function MyListDetail() {
 							>
 								Yêu cầu public
 							</Button>
-						)}
+						)} */}
 					</Box>
 				</Box>
 				{newVocab && (
@@ -352,7 +381,7 @@ function MyListDetail() {
 													</Typography>
 												</TableCell>
 												<TableCell align="right">
-													<IconButton
+													{/* <IconButton
 														// to={`/admin/books/${list.id}`}
 														// component={Link}
 														onClick={() => handleOpenEditDialog(vocab.word)}
@@ -363,7 +392,7 @@ function MyListDetail() {
 														onClick={() => handleOpenDeleteDialog(vocab.word)}
 													>
 														<DeleteIcon sx={{ color: '#F26464' }} />
-													</IconButton>
+													</IconButton> */}
 												</TableCell>
 											</TableRow>
 										))}
@@ -407,4 +436,4 @@ function MyListDetail() {
 	);
 }
 
-export default MyListDetail;
+export default PubListDetail;

@@ -61,7 +61,7 @@ function VocabDialog({
 					autoFocus
 					margin="dense"
 					sx={{ marginRight: 2 }}
-					label="Tên mới của list"
+					label=" Từ vựng "
 					id="newLwordist"
 					name="word"
 					value={newVocab.word}
@@ -71,7 +71,7 @@ function VocabDialog({
 					autoFocus
 					margin="dense"
 					sx={{ marginRight: 2 }}
-					label="Tên mới của list"
+					label="Nghĩa của từ"
 					id="meaning"
 					name="meaning"
 					value={newVocab.meaning}
@@ -81,7 +81,7 @@ function VocabDialog({
 					autoFocus
 					margin="dense"
 					sx={{ marginRight: 2 }}
-					label="Tên mới của list"
+					label="Ví dụ"
 					id="newList"
 					name="example"
 					onChange={handleChange}
