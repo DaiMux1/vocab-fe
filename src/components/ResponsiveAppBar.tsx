@@ -33,6 +33,11 @@ const ResponsiveAppBar = () => {
 		null
 	);
 
+	// const [noti]
+
+	const [anchorElNotify, setAnchorElNotify] =
+		React.useState<null | HTMLElement>(null);
+
 	const { user } = useContext(UserContext);
 
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -41,6 +46,9 @@ const ResponsiveAppBar = () => {
 	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElUser(event.currentTarget);
 	};
+	const handleOpenNotifyMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorElNotify(event.currentTarget);
+	};
 
 	const handleCloseNavMenu = () => {
 		setAnchorElNav(null);
@@ -48,6 +56,9 @@ const ResponsiveAppBar = () => {
 
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
+	};
+	const handleCloseNotifyMenu = () => {
+		setAnchorElNotify(null);
 	};
 
 	const handleSettings = (setting: string) => {
@@ -153,10 +164,10 @@ const ResponsiveAppBar = () => {
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>
-						{console.log('user', user)}
 						{!!user ? (
 							<>
 								<IconButton
+									onClick={handleOpenUserMenu}
 									size="large"
 									aria-label="show 17 new notifications"
 									color="inherit"
@@ -191,6 +202,31 @@ const ResponsiveAppBar = () => {
 								>
 									{settings.map(setting => (
 										<MenuItem key={setting} onClick={handleCloseUserMenu}>
+											<Button onClick={() => handleSettings(setting)}>
+												<Typography textAlign="center">{setting}</Typography>
+											</Button>
+										</MenuItem>
+									))}
+								</Menu>
+
+								<Menu
+									sx={{ mt: '45px' }}
+									id="menu-appbar"
+									anchorEl={anchorElNotify}
+									anchorOrigin={{
+										vertical: 'top',
+										horizontal: 'right'
+									}}
+									keepMounted
+									transformOrigin={{
+										vertical: 'top',
+										horizontal: 'right'
+									}}
+									open={Boolean(anchorElNotify)}
+									onClose={handleCloseNotifyMenu}
+								>
+									{settings.map(setting => (
+										<MenuItem key={setting} onClick={handleCloseNotifyMenu}>
 											<Button onClick={() => handleSettings(setting)}>
 												<Typography textAlign="center">{setting}</Typography>
 											</Button>

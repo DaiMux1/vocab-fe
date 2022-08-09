@@ -217,11 +217,17 @@ function MyList() {
 
 												<TableCell align="right"></TableCell>
 												<TableCell align="right">
-													{list.public === 1 ? (
+													{list.public === 2 && (
 														<IconButton>
 															<PublicIcon />
 														</IconButton>
-													) : (
+													)}
+													{list.public === 1 && (
+														<IconButton disabled>
+															Chờ phê duyệt công khai
+														</IconButton>
+													)}
+													{list.public === 0 && (
 														<IconButton>Yêu cầu public</IconButton>
 													)}
 													<IconButton

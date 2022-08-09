@@ -21,6 +21,7 @@ import {
 	addVocabToList,
 	getMyListDetail,
 	removeVocabInList,
+	requestPublic,
 	updateVocabInList
 } from '../services/listService';
 import { ListReturn, Vocab } from '../types/list';
@@ -197,6 +198,18 @@ function MyListDetail() {
 		}
 	};
 
+	const handleRequestPublic = async () => {
+		try {
+			await requestPublic(id);
+			enqueueSnackbar('Yêu cầu công khai từ vựng thành công', {
+				variant: 'success'
+			});
+			getData();
+		} catch (error) {
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		}
+	};
+
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
@@ -227,7 +240,7 @@ function MyListDetail() {
 							// component={Link}
 							// to="/create-list"
 							disabled={!!newVocab}
-							sx={{ mx: 3, whiteSpace: 'nowrap' }}
+							sx={{ mx: 3, whiteSpace: 'nowrap', width: 200 }}
 							variant="contained"
 							onClick={() => {
 								setNewVocab({
@@ -241,12 +254,21 @@ function MyListDetail() {
 						</Button>
 						{list?.public === 0 && (
 							<Button
-								component={Link}
-								to="/create-list"
-								sx={{ mr: 3, whiteSpace: 'nowrap' }}
+								onClick={handleRequestPublic}
+								sx={{ mr: 3, whiteSpace: 'nowrap', width: 300 }}
 								variant="contained"
 							>
 								Yêu cầu public
+							</Button>
+						)}
+
+						{list?.public === 1 && (
+							<Button
+								sx={{ mr: 3, whiteSpace: 'nowrap', width: 300 }}
+								variant="contained"
+								disabled
+							>
+								Chờ phê duyệt công khai
 							</Button>
 						)}
 					</Box>

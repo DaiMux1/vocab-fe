@@ -47,3 +47,7 @@ export function getPubList(name: string, page: number, perPage: number) {
 	};
 	return httpService.get(apiEndpoint + '/search-public', { params });
 }
+
+export function requestPublic(id: string) {
+	return httpService.post(apiEndpoint + '/request_public/' + id);
+}
