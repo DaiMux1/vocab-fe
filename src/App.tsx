@@ -5,6 +5,7 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import './App.css';
 import UserContext from './components/Context/UserContext';
 import { CreateList } from './components/CreateList';
+import HandlePublic from './components/HandlePublic';
 import { Home } from './components/Home';
 import Loading from './components/Loading';
 import Login from './components/Login';
@@ -57,6 +58,7 @@ function App() {
 						<PrivateRoute path="/create-list" component={CreateList} />
 						<PrivateRoute path="/my-list/:id" component={MyListDetail} />
 						<PrivateRoute path="/my-list" component={MyList} />
+						<Route path="/handle-public-list/:id" component={HandlePublic} />
 						<Route path="/public-list/:id" component={PubListDetail} />
 						<Route path="/public-list" component={PubList} />
 						<Route path="/" component={Home} />

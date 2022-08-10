@@ -51,3 +51,14 @@ export function getPubList(name: string, page: number, perPage: number) {
 export function requestPublic(id: string) {
 	return httpService.post(apiEndpoint + '/request_public/' + id);
 }
+
+export function getAllReqPublic() {
+	return httpService.get(apiEndpoint + '/request_public');
+}
+
+export function handleReqPublic(statement: number, listId: string) {
+	return httpService.post(apiEndpoint + '/handle_request_public', {
+		listId,
+		statement
+	});
+}

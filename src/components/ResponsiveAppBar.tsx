@@ -17,14 +17,41 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useContext } from 'react';
 import UserContext from './Context/UserContext';
 import { Link } from 'react-router-dom';
-import { logout } from '../services/authService';
+import { getCurrentUser, logout } from '../services/authService';
 import { useHistory } from 'react-router-dom';
+import logo from '../assets/icons/newlogo.png';
+import { getAllReqPublic } from '../services/listService';
+import { get } from 'dot-prop';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = () => {
 	let history = useHistory();
+	const [reqPubic, setReqPublic] = React.useState<Array<any>>();
+	const [roleUser, setRoleUser] = React.useState(0);
+
+	const getData = async () => {
+		const { data } = await getAllReqPublic();
+		console.log('datareq', data);
+
+		setReqPublic(data);
+	};
+
+	React.useEffect(() => {
+		const interval = setInterval(() => {
+			getData();
+		}, 3000);
+		return () => clearInterval(interval);
+	}, []);
+
+	React.useEffect(() => {
+		const currentUser = getCurrentUser();
+
+		if (currentUser) {
+			setRoleUser(currentUser.role);
+		}
+	}, []);
 
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
 		null
@@ -72,25 +99,7 @@ const ResponsiveAppBar = () => {
 		<AppBar position="static">
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
-					<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-					<Typography
-						variant="h6"
-						noWrap
-						component="a"
-						href="/"
-						sx={{
-							mr: 2,
-							display: { xs: 'none', md: 'flex' },
-							fontFamily: 'monospace',
-							fontWeight: 700,
-							letterSpacing: '.3rem',
-							color: 'inherit',
-							textDecoration: 'none'
-						}}
-					>
-						LOGO
-					</Typography>
-
+					<img src={logo} width="100px" alt="" />
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"
@@ -102,57 +111,11 @@ const ResponsiveAppBar = () => {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Menu
-							id="menu-appbar"
-							anchorEl={anchorElNav}
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'left'
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'left'
-							}}
-							open={Boolean(anchorElNav)}
-							onClose={handleCloseNavMenu}
-							sx={{
-								display: { xs: 'block', md: 'none' }
-							}}
-						>
-							{pages.map(page => (
-								<MenuItem key={page} onClick={handleCloseNavMenu}>
-									<Typography
-										onClick={() => console.log('aaaa')}
-										textAlign="center"
-									>
-										{page}
-									</Typography>
-								</MenuItem>
-							))}
-						</Menu>
 					</Box>
 					<AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-					<Typography
-						variant="h5"
-						noWrap
-						component="a"
-						href=""
-						sx={{
-							mr: 2,
-							display: { xs: 'flex', md: 'none' },
-							flexGrow: 1,
-							fontFamily: 'monospace',
-							fontWeight: 700,
-							letterSpacing: '.3rem',
-							color: 'inherit',
-							textDecoration: 'none'
-						}}
-					>
-						LOGO
-					</Typography>
+
 					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-						{pages.map(page => (
+						{/* {pages.map(page => (
 							<Button
 								key={page}
 								onClick={handleCloseNavMenu}
@@ -160,22 +123,29 @@ const ResponsiveAppBar = () => {
 							>
 								{page}
 							</Button>
-						))}
+						))} */}
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>
 						{!!user ? (
 							<>
-								<IconButton
-									onClick={handleOpenUserMenu}
-									size="large"
-									aria-label="show 17 new notifications"
-									color="inherit"
-								>
-									<Badge badgeContent={17} color="error">
-										<NotificationsIcon />
-									</Badge>
-								</IconButton>
+								<Tooltip title="Open notify">
+									<IconButton
+										onClick={handleOpenNotifyMenu}
+										size="large"
+										aria-label="show 17 new notifications"
+										color="inherit"
+									>
+										<Badge
+											badgeContent={
+												roleUser === 1 && reqPubic ? reqPubic.length : 0
+											}
+											color="error"
+										>
+											<NotificationsIcon />
+										</Badge>
+									</IconButton>
+								</Tooltip>
 								<Tooltip title="Open settings">
 									<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
 										<Avatar
@@ -186,7 +156,7 @@ const ResponsiveAppBar = () => {
 								</Tooltip>
 								<Menu
 									sx={{ mt: '45px' }}
-									id="menu-appbar"
+									id="menu-user"
 									anchorEl={anchorElUser}
 									anchorOrigin={{
 										vertical: 'top',
@@ -211,7 +181,7 @@ const ResponsiveAppBar = () => {
 
 								<Menu
 									sx={{ mt: '45px' }}
-									id="menu-appbar"
+									id="menu-notify"
 									anchorEl={anchorElNotify}
 									anchorOrigin={{
 										vertical: 'top',
@@ -225,13 +195,23 @@ const ResponsiveAppBar = () => {
 									open={Boolean(anchorElNotify)}
 									onClose={handleCloseNotifyMenu}
 								>
-									{settings.map(setting => (
-										<MenuItem key={setting} onClick={handleCloseNotifyMenu}>
-											<Button onClick={() => handleSettings(setting)}>
-												<Typography textAlign="center">{setting}</Typography>
-											</Button>
-										</MenuItem>
-									))}
+									{roleUser === 1 &&
+										reqPubic &&
+										reqPubic.map(r => (
+											<MenuItem key={r} onClick={handleCloseNotifyMenu}>
+												<Button
+													onClick={() =>
+														history.push(
+															`/handle-public-list/${get(r, 'listId')}`
+														)
+													}
+												>
+													<Typography textAlign="center">
+														{get(r, 'author')} yêu cầu public danh từ vựng
+													</Typography>
+												</Button>
+											</MenuItem>
+										))}
 								</Menu>
 							</>
 						) : (
