@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom';
 import { getCurrentUser, logout } from '../services/authService';
 import { useHistory } from 'react-router-dom';
 import logo from '../assets/icons/newlogo.png';
-import { getAllReqPublic } from '../services/listService';
+import { getAllReqContributor, getAllReqPublic } from '../services/listService';
 import { get } from 'dot-prop';
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -29,19 +29,24 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const ResponsiveAppBar = () => {
 	let history = useHistory();
 	const [reqPubic, setReqPublic] = React.useState<Array<any>>();
+	const [reqContributor, setReqContributor] = React.useState<Array<any>>([]);
 	const [roleUser, setRoleUser] = React.useState(0);
 
 	const getData = async () => {
 		const { data } = await getAllReqPublic();
+		const { data: contributorData } = await getAllReqContributor();
 		console.log('datareq', data);
+		console.log('contributorData', contributorData);
 
 		setReqPublic(data);
+		setReqContributor(contributorData);
 	};
 
 	React.useEffect(() => {
+		getData();
 		const interval = setInterval(() => {
 			getData();
-		}, 3000);
+		}, 30 * 1000);
 		return () => clearInterval(interval);
 	}, []);
 
@@ -99,7 +104,9 @@ const ResponsiveAppBar = () => {
 		<AppBar position="static">
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
-					<img src={logo} width="100px" alt="" />
+					<IconButton onClick={() => history.push('/')}>
+						<img src={logo} width="100px" alt="" />
+					</IconButton>
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"
@@ -138,7 +145,9 @@ const ResponsiveAppBar = () => {
 									>
 										<Badge
 											badgeContent={
-												roleUser === 1 && reqPubic ? reqPubic.length : 0
+												roleUser === 1 && reqPubic
+													? reqPubic.length + reqContributor?.length
+													: 0
 											}
 											color="error"
 										>
@@ -212,6 +221,19 @@ const ResponsiveAppBar = () => {
 												</Button>
 											</MenuItem>
 										))}
+									{reqContributor.map(r => (
+										<MenuItem key={r} onClick={handleCloseNotifyMenu}>
+											<Button
+												onClick={() =>
+													history.push(`/handle-contributor/${get(r, 'id')}`)
+												}
+											>
+												<Typography textAlign="center">
+													{get(r, 'contributor.username')} muốn góp từ vựng
+												</Typography>
+											</Button>
+										</MenuItem>
+									))}
 								</Menu>
 							</>
 						) : (

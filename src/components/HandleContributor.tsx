@@ -6,7 +6,6 @@ import {
 	IconButton,
 	Pagination,
 	Paper,
-	Rating,
 	Table,
 	TableBody,
 	TableCell,
@@ -17,29 +16,26 @@ import {
 	Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Link, Redirect, useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
 import {
-	addVocabToList,
 	getMyListDetail,
+	getOneReqContributor,
+	handleReqContributor,
+	handleReqPublic,
 	removeVocabInList,
-	requestContributor,
 	updateVocabInList
 } from '../services/listService';
 import { ListReturn, Vocab } from '../types/list';
 import SearchIcon from '@mui/icons-material/Search';
 import _ from 'lodash';
 import { SIZE_PAGINATION } from '../constants/constans';
-import EditIcon from '@mui/icons-material/Edit';
 import VocabDialog from './VocabDialog';
 import { useSnackbar } from 'notistack';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog';
 import { getCurrentUser } from '../services/authService';
 import { get } from 'dot-prop';
-import { getMyFavoritesList } from '../services/userService';
 
-function PubListDetail() {
+function HandleContributor() {
 	let history = useHistory();
 	const { id } = useParams<{ id: string }>();
 	const [list, setList] = useState<ListReturn | undefined>();
@@ -54,14 +50,12 @@ function PubListDetail() {
 	const [isMyList, setIsMyList] = useState(false);
 	const [voteStar, setVoteStar] = useState(0);
 
-	const [myFavoritesList, setMyFavoritesList] = useState<string[]>();
-
 	console.log('voteStar', voteStar);
 
 	const { enqueueSnackbar } = useSnackbar();
 
 	const getData = async () => {
-		const { data } = await getMyListDetail(id);
+		const { data } = await getOneReqContributor(id);
 
 		console.log('data', data);
 		console.log('getCurrentUser()', getCurrentUser());
@@ -69,22 +63,21 @@ function PubListDetail() {
 		if (get(data, 'author.username') === getCurrentUser()?.username) {
 			setIsMyList(true);
 		}
-		setList(data);
+		setList(get(data, 'list'));
+		console.log(
+			"get(data, 'requestContributor.vocab[0]')",
+			get(data, 'requestContributor.vocab')
+		);
+		setNewVocab(
+			get<Vocab[]>(data, 'requestContributor.vocab', [
+				{
+					word: 'string',
+					meaning: 'string',
+					example: 'string'
+				}
+			])[0]
+		);
 	};
-
-	const getMyFavoritesListData = async () => {
-		const { data } = await getMyFavoritesList();
-		console.log();
-
-		setMyFavoritesList(data);
-	};
-
-	console.log(myFavoritesList, 'myFavoritesList');
-
-	console.log('list', list);
-	console.log('listShow', listShow);
-
-	useEffect(() => {}, []);
 
 	useEffect(() => {
 		getData();
@@ -109,10 +102,6 @@ function PubListDetail() {
 			// console.log(list?.vocab.filter(v => v.word.match(new RegExp(search))));
 		}
 	}, [search, list]);
-
-	if (isMyList) {
-		return <Redirect to={`/my-list/${id}`} />;
-	}
 
 	const handleOpenEditDialog = (word: string) => {
 		setVocab(word);
@@ -160,36 +149,6 @@ function PubListDetail() {
 		}
 	};
 
-	const handleChange = (
-		evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		const name = evt.target.name;
-		const newValue = evt.target.value;
-		setNewVocab({ ...newVocab, ...{ [name]: newValue } } as Vocab);
-	};
-
-	const handleAddNewVocab = async () => {
-		let flag = true;
-		try {
-			await requestContributor(id, newVocab as Vocab);
-			enqueueSnackbar('Yêu cầu thêm từ vựng thành công', {
-				variant: 'success'
-			});
-		} catch (error) {
-			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
-			flag = false;
-		}
-
-		if (flag) {
-			setNewVocab(undefined);
-		}
-	};
-
-	const handleOpenDeleteDialog = (word: string) => {
-		setVocab(word);
-		setOpenDelete(true);
-	};
-
 	const handleCloseDialog = () => {
 		setOpenDelete(false);
 		setVocab('');
@@ -225,6 +184,18 @@ function PubListDetail() {
 		}
 	};
 
+	const handleRequestContributor = async (state: number) => {
+		try {
+			await handleReqContributor(state, id);
+			enqueueSnackbar('Xử lý thành công', { variant: 'success' });
+		} catch (error) {
+			console.log(error);
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		} finally {
+			history.push('/');
+		}
+	};
+
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
@@ -252,43 +223,6 @@ function PubListDetail() {
 							size="medium"
 							fullWidth
 						/>
-						<Button
-							// component={Link}
-							// to="/create-list"
-							disabled={!!newVocab}
-							sx={{ mx: 3, whiteSpace: 'nowrap' }}
-							variant="contained"
-							onClick={() => {
-								setNewVocab({
-									word: '',
-									meaning: '',
-									example: ''
-								});
-							}}
-						>
-							Góp từ vựng
-						</Button>
-						<Box sx={{ display: 'flex', alignItems: 'center' }}>
-							<Rating
-								name="simple-controlled"
-								precision={0.5}
-								value={voteStar}
-								onChange={(event, newValue) => {
-									setVoteStar(newValue as number);
-								}}
-							/>
-						</Box>
-
-						{/* {list?.public === 0 && (
-							<Button
-								component={Link}
-								to="/create-list"
-								sx={{ mr: 3, whiteSpace: 'nowrap' }}
-								variant="contained"
-							>
-								Yêu cầu public
-							</Button>
-						)} */}
 					</Box>
 				</Box>
 				{newVocab && (
@@ -301,7 +235,6 @@ function PubListDetail() {
 								id="Word"
 								name="word"
 								value={newVocab.word}
-								onChange={handleChange}
 							/>
 						</Grid>
 						<Grid item xs={3}>
@@ -311,36 +244,39 @@ function PubListDetail() {
 								label="Nghĩa tiếng việt"
 								id="Meaning"
 								name="meaning"
-								onChange={handleChange}
 								defaultValue={newVocab.meaning}
 							/>
 						</Grid>
-						<Grid item xs={5}>
+						<Grid item xs={6}>
 							<TextField
 								fullWidth
 								label="Ví dụ"
 								id="Example"
 								name="example"
-								onChange={handleChange}
 								defaultValue={newVocab.example}
 							/>
 						</Grid>
-						<Grid item xs={1} mt={1}>
-							<IconButton
-								onClick={handleAddNewVocab}
-								disabled={
-									!newVocab.word || !newVocab.meaning || !newVocab.example
-								}
-							>
-								{!newVocab.word || !newVocab.meaning || !newVocab.example ? (
-									<AddCircleIcon />
-								) : (
-									<AddCircleIcon color="primary" />
-								)}
-							</IconButton>
-						</Grid>
 					</Grid>
 				)}
+
+				<Box display={'flex'} alignSelf="center" alignItems={'center'}>
+					<Typography variant="h5">Xử lý:</Typography>
+					<Box mx={1}></Box>
+					<Button
+						variant="contained"
+						onClick={() => handleRequestContributor(2)}
+					>
+						Duyệt
+					</Button>
+					<Box mx={1}></Box>
+					<Button
+						variant="contained"
+						onClick={() => handleRequestContributor(1)}
+						sx={{ bgcolor: 'red' }}
+					>
+						Không duyệt
+					</Button>
+				</Box>
 				<Box>
 					<TableContainer component={Paper}>
 						<Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -391,20 +327,7 @@ function PubListDetail() {
 														{vocab.example}
 													</Typography>
 												</TableCell>
-												<TableCell align="right">
-													{/* <IconButton
-														// to={`/admin/books/${list.id}`}
-														// component={Link}
-														onClick={() => handleOpenEditDialog(vocab.word)}
-													>
-														<EditIcon />
-													</IconButton>
-													<IconButton
-														onClick={() => handleOpenDeleteDialog(vocab.word)}
-													>
-														<DeleteIcon sx={{ color: '#F26464' }} />
-													</IconButton> */}
-												</TableCell>
+												<TableCell align="right"></TableCell>
 											</TableRow>
 										))}
 							</TableBody>
@@ -430,21 +353,10 @@ function PubListDetail() {
 							}}
 						/>
 					</Box>
-					<VocabDialog
-						open={openEdit}
-						oldVocab={list?.vocab.find(v => v.word === vocab)}
-						onClose={handleCloseEditDialog}
-						onEdit={handleEdit}
-					/>
-					<ConfirmDeleteDialog
-						open={openDetele}
-						onClose={handleCloseDialog}
-						onDelete={handleDelete}
-					/>
 				</Box>
 			</Box>
 		</Container>
 	);
 }
 
-export default PubListDetail;
+export default HandleContributor;

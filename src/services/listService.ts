@@ -62,3 +62,25 @@ export function handleReqPublic(statement: number, listId: string) {
 		statement
 	});
 }
+
+export function requestContributor(listId: string, vocab: Vocab) {
+	return httpService.post(apiEndpoint + '/request_contributor', {
+		listId,
+		vocab: [vocab]
+	});
+}
+
+export function getAllReqContributor() {
+	return httpService.get(apiEndpoint + '/request_contributor');
+}
+
+export function getOneReqContributor(id: string) {
+	return httpService.get(apiEndpoint + '/request_contributor/' + id);
+}
+
+export function handleReqContributor(statement: number, id: string) {
+	return httpService.post(apiEndpoint + '/handle_request_contributor', {
+		id,
+		statement
+	});
+}
