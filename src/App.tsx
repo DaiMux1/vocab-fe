@@ -5,13 +5,16 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import './App.css';
 import UserContext from './components/Context/UserContext';
 import { CreateList } from './components/CreateList';
+import ForgotPass from './components/FotgotPass';
 import HandleContributor from './components/HandleContributor';
 import HandlePublic from './components/HandlePublic';
 import { Home } from './components/Home';
 import Loading from './components/Loading';
 import Login from './components/Login';
+import MyFavoritesList from './components/MyFavoritesList';
 import MyList from './components/MyList';
 import MyListDetail from './components/MyListDetail';
+import NewPassWhenForgot from './components/NewPassWhenForgot';
 import PrivateRoute from './components/PrivateRoute';
 import PubList from './components/PubList';
 import PubListDetail from './components/PubListDetail';
@@ -52,10 +55,19 @@ function App() {
 				<CssBaseline />
 				<UserContext.Provider value={{ user }}>
 					{location.pathname !== '/login' &&
-						location.pathname !== '/signup' && <ResponsiveAppBar />}
+						location.pathname !== '/signup' &&
+						location.pathname !== '/forgot-password' &&
+						location.pathname !== '/new-password-when-fotgot/:token' && (
+							<ResponsiveAppBar />
+						)}
 					<Switch>
 						<Route path="/login" component={Login} />
 						<Route path="/signup" component={SignUp} />
+						<Route path="/forgot-password" component={ForgotPass} />
+						<Route
+							path="/new-password-when-fotgot/:token"
+							component={NewPassWhenForgot}
+						/>
 						<PrivateRoute path="/create-list" component={CreateList} />
 						<PrivateRoute path="/my-list/:id" component={MyListDetail} />
 						<PrivateRoute path="/my-list" component={MyList} />
@@ -66,6 +78,7 @@ function App() {
 						/>
 						<Route path="/public-list/:id" component={PubListDetail} />
 						<Route path="/public-list" component={PubList} />
+						<Route path="/my-favorites-list" component={MyFavoritesList} />
 						<Route path="/" component={Home} />
 					</Switch>
 				</UserContext.Provider>

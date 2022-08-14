@@ -33,7 +33,7 @@ const FEATURE_LIST = [
 		title: 'List từ vựng yêu thích',
 		subTitle: 'List từ vựng mà bạn yêu thích',
 		imgUrl: favoriteIcon,
-		to: '/'
+		to: '/my-favorites-list'
 	}
 	// {
 	// 	title: 'Bảng phiên âm (IPA)',

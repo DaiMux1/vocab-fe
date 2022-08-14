@@ -23,7 +23,8 @@ import {
 	getMyListDetail,
 	removeVocabInList,
 	requestContributor,
-	updateVocabInList
+	updateVocabInList,
+	voteStarApi
 } from '../services/listService';
 import { ListReturn, Vocab } from '../types/list';
 import SearchIcon from '@mui/icons-material/Search';
@@ -37,7 +38,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog';
 import { getCurrentUser } from '../services/authService';
 import { get } from 'dot-prop';
-import { getMyFavoritesList } from '../services/userService';
+import {
+	addFavoriteList,
+	getMyFavoritesList,
+	removeFavoriteList
+} from '../services/userService';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function PubListDetail() {
 	let history = useHistory();
@@ -88,6 +95,7 @@ function PubListDetail() {
 
 	useEffect(() => {
 		getData();
+		getMyFavoritesListData();
 	}, [id]);
 
 	useEffect(() => {
@@ -225,6 +233,45 @@ function PubListDetail() {
 		}
 	};
 
+	const handleAddFavoriteList = async () => {
+		try {
+			await addFavoriteList(id);
+			getMyFavoritesListData();
+			enqueueSnackbar('Thêm vào danh sách yêu thích thành công', {
+				variant: 'success'
+			});
+		} catch (error) {
+			console.log(error);
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		}
+	};
+
+	const handleRemoveFavoriteList = async () => {
+		try {
+			await removeFavoriteList(id);
+			getMyFavoritesListData();
+			enqueueSnackbar('Xóa khỏi danh sách yêu thích thành công', {
+				variant: 'success'
+			});
+		} catch (error) {
+			console.log(error);
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		}
+	};
+
+	const handleVoteStar = async (star: number) => {
+		try {
+			await voteStarApi(star, id);
+			getData();
+			enqueueSnackbar(`Bạn đã vote ${star} cho danh sách này`, {
+				variant: 'success'
+			});
+		} catch (error) {
+			console.log(error);
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		}
+	};
+
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
@@ -274,9 +321,23 @@ function PubListDetail() {
 								precision={0.5}
 								value={voteStar}
 								onChange={(event, newValue) => {
-									setVoteStar(newValue as number);
+									handleVoteStar(newValue as number);
 								}}
 							/>
+						</Box>
+						<Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+							{myFavoritesList?.includes(id) ? (
+								<IconButton aria-label="remove-f">
+									<FavoriteIcon
+										sx={{ color: 'red' }}
+										onClick={handleRemoveFavoriteList}
+									/>
+								</IconButton>
+							) : (
+								<IconButton aria-label="add-f" onClick={handleAddFavoriteList}>
+									<FavoriteBorderIcon />
+								</IconButton>
+							)}
 						</Box>
 
 						{/* {list?.public === 0 && (

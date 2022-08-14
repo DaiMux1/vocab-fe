@@ -15,6 +15,13 @@ export function getMyList(filter: FilterList) {
 	return httpService.get(apiEndpoint + '/my-list', { params });
 }
 
+export function getMyFavoritesList(filter: FilterList) {
+	const params = {
+		search: filter.search
+	};
+	return httpService.get(apiEndpoint + '/my-favorites-list', { params });
+}
+
 export function deleteList(id: string) {
 	return httpService.delete(apiEndpoint + '/' + id);
 }
@@ -83,4 +90,8 @@ export function handleReqContributor(statement: number, id: string) {
 		id,
 		statement
 	});
+}
+
+export function voteStarApi(star: number, listId: string) {
+	return httpService.post(apiEndpoint + '/star', { star, listId });
 }

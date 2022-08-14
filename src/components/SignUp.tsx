@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { AxiosError } from 'axios';
 import _ from 'lodash';
 import { makeValidate, TextField } from 'mui-rff';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { Form } from 'react-final-form';
 import { NavLink, Redirect } from 'react-router-dom';
@@ -20,14 +21,14 @@ import { getCurrentUser, signup, loginWithJwt } from '../services/authService';
 
 interface SignUpFormData {
 	username: string;
-	// email: string;
+	email: string;
 	password: string;
 	rePassword: string;
 }
 
 const schema: Yup.SchemaOf<SignUpFormData> = Yup.object().shape({
 	username: Yup.string().min(3).required(),
-	// email: Yup.string().email().required(),
+	email: Yup.string().email().required(),
 	password: Yup.string().min(5).required(),
 	rePassword: Yup.string()
 		.min(5)
@@ -40,20 +41,24 @@ const validate = makeValidate(schema);
 const SignUp = () => {
 	const [error, setError] = useState('');
 
+	const { enqueueSnackbar } = useSnackbar();
+
 	const handleSubmit = async (user: SignUpFormData) => {
 		// const userSignUp = _.pick(user, 'email', 'password', 'username');
-		const userSignUp = _.pick(user, 'password', 'username');
+		const userSignUp = _.pick(user, 'password', 'username', 'email');
 
 		try {
 			const { data } = await signup(userSignUp);
-			loginWithJwt(data.access_token);
-			window.location.replace('/');
+			enqueueSnackbar('Đăng kí thành công. Vui lòng vào email để xác nhận', {
+				variant: 'success'
+			});
 		} catch (e) {
 			const error = e as AxiosError;
 			if (error.response) {
 				const { data } = error.response;
 				setError(data.message);
 			}
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
 		}
 	};
 
@@ -93,7 +98,7 @@ const SignUp = () => {
 									autoComplete="username"
 									autoFocus
 								/>
-								{/* <TextField
+								<TextField
 									margin="normal"
 									required
 									fullWidth
@@ -102,7 +107,7 @@ const SignUp = () => {
 									name="email"
 									autoComplete="email"
 									autoFocus
-								/> */}
+								/>
 								<TextField
 									margin="normal"
 									required
@@ -129,7 +134,7 @@ const SignUp = () => {
 								/> */}
 								{error && (
 									<Typography sx={{ color: 'red' }}>{error}</Typography>
-								)}	
+								)}
 								<Button
 									disabled={invalid || submitting}
 									type="submit"

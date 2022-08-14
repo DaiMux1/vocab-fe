@@ -5,6 +5,7 @@ import {
 	Grid,
 	IconButton,
 	Pagination,
+	Rating,
 	Paper,
 	Table,
 	TableBody,
@@ -34,6 +35,13 @@ import { useSnackbar } from 'notistack';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog';
+import {
+	addFavoriteList,
+	getMyFavoritesList,
+	removeFavoriteList
+} from '../services/userService';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function MyListDetail() {
 	const { id } = useParams<{ id: string }>();
@@ -46,6 +54,10 @@ function MyListDetail() {
 	const [page, setPage] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
 	const [openDetele, setOpenDelete] = useState(false);
+
+	const [myFavoritesList, setMyFavoritesList] = useState<string[]>();
+
+	const [voteStar, setVoteStar] = useState(0);
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -60,8 +72,14 @@ function MyListDetail() {
 	// 	setSearch(search);
 	// }, 1000);
 
+	const getMyFavoritesListData = async () => {
+		const { data } = await getMyFavoritesList();
+		setMyFavoritesList(data);
+	};
+
 	useEffect(() => {
 		getData();
+		getMyFavoritesListData();
 	}, [id]);
 
 	useEffect(() => {
@@ -79,6 +97,8 @@ function MyListDetail() {
 			);
 
 			setListShow(vocab);
+			setVoteStar(list.star);
+
 			// console.log(list?.vocab.filter(v => v.word.match(new RegExp(search))));
 		}
 	}, [search, list]);
@@ -210,6 +230,32 @@ function MyListDetail() {
 		}
 	};
 
+	const handleAddFavoriteList = async () => {
+		try {
+			await addFavoriteList(id);
+			getMyFavoritesListData();
+			enqueueSnackbar('Thêm vào danh sách yêu thích thành công', {
+				variant: 'success'
+			});
+		} catch (error) {
+			console.log(error);
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		}
+	};
+
+	const handleRemoveFavoriteList = async () => {
+		try {
+			await removeFavoriteList(id);
+			getMyFavoritesListData();
+			enqueueSnackbar('Xóa khỏi danh sách yêu thích thành công', {
+				variant: 'success'
+			});
+		} catch (error) {
+			console.log(error);
+			enqueueSnackbar('Có lỗi xảy ra', { variant: 'error' });
+		}
+	};
+
 	return (
 		<Container maxWidth="xl">
 			<Box mx={10}>
@@ -271,6 +317,30 @@ function MyListDetail() {
 								Chờ phê duyệt công khai
 							</Button>
 						)}
+						{list?.public === 2 && (
+							<Box sx={{ display: 'flex', alignItems: 'center' }}>
+								<Rating
+									readOnly
+									name="simple-controlled"
+									precision={0.5}
+									value={voteStar}
+								/>
+							</Box>
+						)}
+						<Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+							{myFavoritesList?.includes(id) ? (
+								<IconButton aria-label="remove-f">
+									<FavoriteIcon
+										sx={{ color: 'red' }}
+										onClick={handleRemoveFavoriteList}
+									/>
+								</IconButton>
+							) : (
+								<IconButton aria-label="add-f" onClick={handleAddFavoriteList}>
+									<FavoriteBorderIcon />
+								</IconButton>
+							)}
+						</Box>
 					</Box>
 				</Box>
 				{newVocab && (

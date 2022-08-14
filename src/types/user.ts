@@ -33,3 +33,9 @@ export type Author = {
 };
 
 export type UserLogin = Pick<UserDB, 'username' | 'password'>;
+
+export type UserSignUp = {
+	username: string;
+	password: string;
+	email: string;
+};

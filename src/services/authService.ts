@@ -1,6 +1,6 @@
 import http from './httpService';
 import jwtDecode from 'jwt-decode';
-import { CurrentUser, UserLogin } from '../types/user';
+import { CurrentUser, UserLogin, UserSignUp } from '../types/user';
 import axios, { AxiosResponse } from 'axios';
 
 const apiEndpoint = '/auth';
@@ -22,6 +22,14 @@ export async function login(user: UserLogin) {
 	}
 }
 
+export async function forgotPass(email: string) {
+	return http.post(apiEndpoint + '/forgot-pass', { email });
+}
+
+export async function newPassWhenFotgot(token: string, newPass: string) {
+	return http.post(apiEndpoint + 'verify-forgot-pass', { token, newPass });
+}
+
 export async function loginWithJwt(token: any) {
 	localStorage.setItem(tokenKey, token);
 }
@@ -34,8 +42,8 @@ export function logout() {
 	localStorage.removeItem(tokenKey);
 }
 
-export function signup(user: UserLogin) {
-	return http.post<Token>(apiEndpoint + '/signup', user);
+export function signup(user: UserSignUp) {
+	return http.post(apiEndpoint + '/signup', user);
 }
 
 export function getCurrentUser(): CurrentUser | undefined {

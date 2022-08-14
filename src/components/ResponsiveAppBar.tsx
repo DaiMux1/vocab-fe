@@ -204,7 +204,7 @@ const ResponsiveAppBar = () => {
 									open={Boolean(anchorElNotify)}
 									onClose={handleCloseNotifyMenu}
 								>
-									{roleUser === 1 &&
+									{roleUser >= 1 &&
 										reqPubic &&
 										reqPubic.map(r => (
 											<MenuItem key={r} onClick={handleCloseNotifyMenu}>
@@ -221,19 +221,37 @@ const ResponsiveAppBar = () => {
 												</Button>
 											</MenuItem>
 										))}
-									{reqContributor.map(r => (
-										<MenuItem key={r} onClick={handleCloseNotifyMenu}>
-											<Button
-												onClick={() =>
-													history.push(`/handle-contributor/${get(r, 'id')}`)
-												}
-											>
+									{roleUser >= 1 &&
+										reqContributor.length === 0 &&
+										reqPubic?.length === 0 && (
+											<MenuItem onClick={handleCloseNotifyMenu}>
 												<Typography textAlign="center">
-													{get(r, 'contributor.username')} muốn góp từ vựng
+													Bạn không có thông báo
 												</Typography>
-											</Button>
+											</MenuItem>
+										)}
+									{roleUser === 0 &&
+										reqContributor.length > 0 &&
+										reqContributor.map(r => (
+											<MenuItem key={r} onClick={handleCloseNotifyMenu}>
+												<Button
+													onClick={() =>
+														history.push(`/handle-contributor/${get(r, 'id')}`)
+													}
+												>
+													<Typography textAlign="center">
+														{get(r, 'contributor.username')} muốn góp từ vựng
+													</Typography>
+												</Button>
+											</MenuItem>
+										))}
+									{roleUser === 0 && reqContributor.length === 0 && (
+										<MenuItem onClick={handleCloseNotifyMenu}>
+											<Typography textAlign="center">
+												Bạn không có thông báo
+											</Typography>
 										</MenuItem>
-									))}
+									)}
 								</Menu>
 							</>
 						) : (
