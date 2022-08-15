@@ -227,9 +227,9 @@ function MyList() {
 															Chờ phê duyệt công khai
 														</IconButton>
 													)}
-													{list.public === 0 && (
+													{/* {list.public === 0 && (
 														<IconButton>Yêu cầu public</IconButton>
-													)}
+													)} */}
 													<IconButton
 														// to={`/admin/books/${list.id}`}
 														// component={Link}

@@ -159,6 +159,12 @@ function MyListDetail() {
 
 	const handleAddNewVocab = async () => {
 		let flag = true;
+
+		console.log('dtaaa123123', {
+			name: list?.name as string,
+			vocab: [newVocab as Vocab]
+		});
+
 		try {
 			await addVocabToList({
 				name: list?.name as string,
@@ -190,15 +196,15 @@ function MyListDetail() {
 
 	const handleDelete = async () => {
 		let flag = true;
-		console.log('data', {
+		console.log('data12312312312312', {
 			name: list?.name as string,
-			vocab: list?.vocab.find(v => (v.word = vocab)) as Vocab
+			vocab: list?.vocab.find(v => v.word == vocab) as Vocab
 		});
 		console.log('vocab', vocab);
 		try {
 			const result = await removeVocabInList({
 				name: list?.name as string,
-				vocab: list?.vocab.find(v => v.word === vocab) as Vocab
+				vocab: list?.vocab.find(v => v.word == vocab) as Vocab
 			});
 			console.log('result', result);
 
@@ -310,7 +316,7 @@ function MyListDetail() {
 
 						{list?.public === 1 && (
 							<Button
-								sx={{ mr: 3, whiteSpace: 'nowrap', width: 300 }}
+								sx={{ mr: 3, whiteSpace: 'nowrap', width: 300, px: 8 }}
 								variant="contained"
 								disabled
 							>

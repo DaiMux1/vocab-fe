@@ -230,8 +230,7 @@ const ResponsiveAppBar = () => {
 												</Typography>
 											</MenuItem>
 										)}
-									{roleUser === 0 &&
-										reqContributor.length > 0 &&
+									{reqContributor.length > 0 &&
 										reqContributor.map(r => (
 											<MenuItem key={r} onClick={handleCloseNotifyMenu}>
 												<Button
